@@ -28,25 +28,28 @@ public class CertificationController {
 
     @GetMapping(value = "/get/{id}", produces = "application/json")
     public ResponseEntity<CertificationDTO> getCertification(@PathVariable Integer id) {
-        if (id == null || id == 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null || id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         logger.info("Get certification by id {}", id);
         return new ResponseEntity<>(certificationService.getCertificationById(id), HttpStatus.OK);
     }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<CertificationDTO> addCertification(@RequestBody Certification certification) {
+        if (certification == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(certificationService.createCertification(certification), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<CertificationDTO> updateCertification(@PathVariable Integer id, @RequestBody Certification certification) {
-        if (id == null || id == 0 || certification == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if ((id == null || id == 0 || certification == null) || (!id.equals(certification.getId()))) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(certificationService.updateCertification(id, certification), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Certification> deleteCertification(@PathVariable Integer id) {
-        if (id == null || id == 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null || id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         certificationService.deleteCertification(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

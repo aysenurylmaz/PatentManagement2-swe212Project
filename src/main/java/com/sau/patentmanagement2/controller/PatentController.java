@@ -28,25 +28,29 @@ public class PatentController {
 
     @GetMapping(value = "/get/{id}", produces = "application/json")
     public ResponseEntity<PatentDTO> getPatent(@PathVariable Integer id) {
-        if (id == null || id == 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null || id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         logger.info("Get patent by id {}", id);
         return new ResponseEntity<>(patentService.getPatentById(id), HttpStatus.OK);
     }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<PatentDTO> addPatent(@RequestBody Patent patent) {
+        if (patent == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(patentService.createPatent(patent), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<PatentDTO> updatePatent(@PathVariable Integer id, @RequestBody Patent patent) {
-        if (id == null || id == 0 || patent == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if ((id == null || id == 0 || patent == null) || (!id.equals(patent.getId())))
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(patentService.updatePatent(id, patent), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Patent> deletePatent(@PathVariable Integer id) {
-        if (id == null || id == 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null || id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         patentService.deletePatent(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

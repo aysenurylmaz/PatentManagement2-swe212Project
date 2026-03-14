@@ -28,25 +28,29 @@ public class AuthorController {
 
     @GetMapping(value = "/get/{id}", produces = "application/json")
     public ResponseEntity<AuthorDTO> getAuthor(@PathVariable Integer id) {
-        if (id == null || id == 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null || id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         logger.info("Get author by id {}", id);
         return new ResponseEntity<>(authorService.getAuthorById(id), HttpStatus.OK);
     }
 
     @PostMapping(value = "/add", consumes = "application/json", produces = "application/json")
     public ResponseEntity<AuthorDTO> addAuthor(@RequestBody Author author) {
-        return new ResponseEntity<>(authorService.createAuthor(author), HttpStatus.CREATED);
+        if (author == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+            return new ResponseEntity<>(authorService.createAuthor(author), HttpStatus.CREATED);
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<AuthorDTO> updateAuthor(@PathVariable Integer id, @RequestBody Author author) {
-        if (id == null || id == 0 || author == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if ((id == null || id == 0 || author == null) || (!id.equals(author.getId()))) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(authorService.updateAuthor(id, author), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Author> deleteAuthor(@PathVariable Integer id) {
-        if (id == null || id == 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (id == null || id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         authorService.deleteAuthor(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
